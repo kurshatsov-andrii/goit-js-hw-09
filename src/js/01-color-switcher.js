@@ -1,46 +1,53 @@
-//Напиши скрипт, який після натискання кнопки «Start», раз на секунду змінює колір фону <body> на випадкове значення, використовуючи інлайн стиль. Натисканням на кнопку «Stop» зміна кольору фону повинна зупинятися.
-//Враховуй, що на кнопку «Start» можна натиснути нескінченну кількість разів. Зроби так, щоб доки зміна теми запущена, кнопка «Start» була неактивною (disabled).
+//Напиши скрипт, який після натискання кнопки «Start», раз на секунду змінює колір фону <body>
+// на випадкове значення, використовуючи інлайн стиль. Натисканням на кнопку «Stop» зміна кольору
+// фону повинна зупинятися.
+//Враховуй, що на кнопку «Start» можна натиснути нескінченну кількість разів.
+//Зроби так, щоб доки зміна теми запущена, кнопка «Start» була неактивною(disabled).
 const links = {
-  startBtn: document.querySelector('button[data-start]'),
-  stopBtn: document.querySelector('button[data-stop]'),
+  startButton: document.querySelector('button[data-start]'),
+  stopButton: document.querySelector('button[data-stop]'),
 };
 
-links.startBtn.addEventListener('click', onStartBtnClick);
-links.stopBtn.addEventListener('click', onStopBtnClick);
+links.startButton.addEventListener('click', onStartButtonClick);
+links.stopButton.addEventListener('click', onStopButtonClick);
 
-let timerId = null;
+//змінна ID таймеру
+let timerID = 0;
 
-makeBtnInactive(links.stopBtn);
+//запускаємо функцію, де кнопка Stop не активна спочатку
+setButtonDisabled(links.stopButton);
 
-function onStartBtnClick(e) {
-  timerId = setInterval(setBodyBgColor, 1000);
-
-  makeBtnInactive(links.startBtn);
-
-  makeBtnActive(links.stopBtn);
+//натискання кнопки Start
+function onStartButtonClick() {
+  timerID = setInterval(bodyBackgroundColor, 1000);
+  setButtonDisabled(links.startButton);
+  setButtonActive(links.stopButton);
 }
 
-function onStopBtnClick() {
-  clearInterval(timerId);
-
-  makeBtnActive(links.startBtn);
-
-  makeBtnInactive(links.stopBtn);
+//натискання кнопки Stop
+function onStopButtonClick() {
+  clearInterval(timerID);
+  timerID = 0;
+  setButtonActive(links.startButton);
+  setButtonDisabled(links.stopButton);
 }
 
-function setBodyBgColor() {
+//Міняємо фон body
+function bodyBackgroundColor() {
   document.body.style.backgroundColor = getRandomHexColor();
 }
 
-function makeBtnActive(btn) {
+//кнопка не активна
+function setButtonDisabled(btn) {
+  btn.setAttribute('disabled', '');
+}
+
+//кнопка активна
+function setButtonActive(btn) {
   btn.removeAttribute('disabled');
 }
 
-function makeBtnInactive(btn) {
-  btn.setAttribute('disabled', 'true');
-}
-
-//Для генерування випадкового кольору використовуй функцію getRandomHexColor
+//Для генерування випадкового кольору використовуємо функцію getRandomHexColor
 function getRandomHexColor() {
   return `#${Math.floor(Math.random() * 16777215)
     .toString(16)

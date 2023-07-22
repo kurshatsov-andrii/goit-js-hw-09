@@ -1,79 +1,91 @@
-//Напиши скрипт таймера, який здійснює зворотний відлік до певної дати. Такий таймер може використовуватися у блогах та інтернет-магазинах, сторінках реєстрації подій, під час технічного обслуговування тощо.
-//Використовуй бібліотеку flatpickr для того, щоб дозволити користувачеві кросбраузерно вибрати кінцеву дату і час в одному елементі інтерфейсу.
+//Напиши скрипт таймера, який здійснює зворотний відлік до певної дати.
+//Такий таймер може використовуватися у блогах та інтернет - магазинах,
+//сторінках реєстрації подій, під час технічного обслуговування тощо.
+//Використовуй бібліотеку flatpickr для того, щоб дозволити користувачеві кросбраузерно
+//вибрати кінцеву дату і час в одному елементі інтерфейсу.
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const links = {
-  startBtn: document.querySelector('button[data-start]'),
+  startButton: document.querySelector('button[data-start]'),
   days: document.querySelector('span[data-days]'),
   hours: document.querySelector('span[data-hours]'),
   minutes: document.querySelector('span[data-minutes]'),
   seconds: document.querySelector('span[data-seconds]'),
 };
 
-let selectedDate = null;
+let selectDate = '';
 
-makeBtnInactive(links.startBtn);
+//запускаємо функцію, де кнопка Start не активна спочатку
+setButtonDisabled(links.startButton);
 
+//Initialize the Notify Module with some options
 Notiflix.Notify.init({
   width: '280px',
-  position: 'center-top',
+  position: 'center-center',
   distance: '10px',
   opacity: 1,
+  clickToClose: true,
 });
 
-//Другим аргументом функції flatpickr(selector, options) можна передати необов'язковий об'єкт параметрів. Ми підготували для тебе об'єкт, який потрібен для виконання завдання.
+//Другим аргументом функції flatpickr(selector, options) можна передати необов'язковий об'єкт
+//параметрів.
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    selectedDate = selectedDates[0];
-
-    if (selectedDate < Date.now()) {
+    selectDate = selectedDates[0];
+    console.log(selectDate);
+    //Треба вибрати майбутню дату
+    if (selectDate < Date.now()) {
       Notiflix.Notify.failure('Please choose a date in the future');
-      makeBtnInactive(links.startBtn);
+      setButtonDisabled(links.startButton);
     } else {
-      makeBtnActive(links.startBtn);
+      setButtonActive(links.startButton);
     }
   },
 };
 
-const fp = flatpickr('#datetime-picker', options);
+flatpickr('#datetime-picker', options);
 
-links.startBtn.addEventListener('click', onStartBtnClick);
+links.startButton.addEventListener('click', onStartButtonClick);
 
-function onStartBtnClick() {
-  makeBtnInactive(links.startBtn);
+//Старт таймеру
+function onStartButtonClick() {
+  setButtonDisabled(links.startButton);
 
-  const timerId = setInterval(() => {
-    let ms = selectedDate - Date.now();
-    let remainedTimeOdject = convertMs(ms);
+  const timerID = setInterval(() => {
+    let ms = selectDate - Date.now();
+    let timeLeft = convertMs(ms);
 
-    links.days.textContent = addLeadingZero(remainedTimeOdject.days);
-    links.hours.textContent = addLeadingZero(remainedTimeOdject.hours);
-    links.minutes.textContent = addLeadingZero(remainedTimeOdject.minutes);
-    links.seconds.textContent = addLeadingZero(remainedTimeOdject.seconds);
-
+    links.days.textContent = addLeadingZero(timeLeft.days);
+    links.hours.textContent = addLeadingZero(timeLeft.hours);
+    links.minutes.textContent = addLeadingZero(timeLeft.minutes);
+    links.seconds.textContent = addLeadingZero(timeLeft.seconds);
+    //Таймер зупиняється, коли дійшов до кінцевої дати, тобто 00:00:00:00
     if (ms < 1000) {
-      clearInterval(timerId);
+      clearInterval(timerID);
+      Notiflix.Notify.success('Time is over');
     }
   }, 1000);
 }
 
-function makeBtnInactive(btn) {
-  btn.setAttribute('disabled', 'true');
+//кнопка не активна
+function setButtonDisabled(btn) {
+  btn.setAttribute('disabled', '');
 }
 
-function makeBtnActive(btn) {
+//кнопка активна
+function setButtonActive(btn) {
   btn.removeAttribute('disabled');
 }
 
-//Для підрахунку значень використовуй готову функцію convertMs, де ms - різниця між кінцевою і поточною датою в мілісекундах.
+//Для підрахунку значень використовуй готову функцію convertMs,
+//де ms - різниця між кінцевою і поточною датою в мілісекундах.
 function convertMs(ms) {
   const second = 1000;
   const minute = second * 60;
@@ -87,6 +99,7 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
+//Додаємо 0 спереду, якщо цифра одна
 function addLeadingZero(value) {
   return (value = value.toString().padStart(2, '0'));
 }

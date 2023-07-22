@@ -1,15 +1,15 @@
-// function createPromise(position, delay) {
-//   const shouldResolve = Math.random() > 0.3;
-//   if (shouldResolve) {
-//     // Fulfill
-//   } else {
-//     // Reject
-//   }
-// }
-
-//Для відображення повідомлень користувачеві, замість console.log(), використовуй бібліотеку notiflix.
+//Для відображення повідомлень користувачеві, замість console.log(),
+//використовуй бібліотеку notiflix.
 import Notiflix from 'notiflix';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
+//Initialize the Notify Module with some options
+Notiflix.Notify.init({
+  width: '280px',
+  position: 'center-center',
+  distance: '10px',
+  opacity: 1,
+  clickToClose: true,
+});
 
 const form = document.querySelector('.form');
 
@@ -21,9 +21,10 @@ function onFormSubmit(event) {
   const initialDelay = Number(event.target.elements.delay.value);
   const step = Number(event.target.elements.step.value);
   const amount = Number(event.target.elements.amount.value);
-
+  //Треба вибрати amount > 0
   if (amount <= 0) {
     event.target.reset();
+    Notiflix.Notify.failure('Please choose amount > 0');
     return;
   }
 
@@ -45,7 +46,10 @@ function onFormSubmit(event) {
   }
 }
 
-//Напиши скрипт, який на момент сабміту форми викликає функцію createPromise(position, delay) стільки разів, скільки ввели в поле amount. Під час кожного виклику передай їй номер промісу (position), що створюється, і затримку, враховуючи першу затримку (delay), введену користувачем, і крок (step).
+//Напиши скрипт, який на момент сабміту форми викликає функцію
+//createPromise(position, delay) стільки разів, скільки ввели в поле amount.
+//Під час кожного виклику передай їй номер промісу(position), що створюється, і затримку,
+//враховуючи першу затримку(delay), введену користувачем, і крок(step).
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
 

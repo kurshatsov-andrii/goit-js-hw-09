@@ -14,6 +14,7 @@ const links = {
   hours: document.querySelector('span[data-hours]'),
   minutes: document.querySelector('span[data-minutes]'),
   seconds: document.querySelector('span[data-seconds]'),
+  dataTime: document.querySelector('input'),
 };
 
 let selectDate = '';
@@ -57,6 +58,7 @@ links.startButton.addEventListener('click', onStartButtonClick);
 //Старт таймеру
 function onStartButtonClick() {
   setButtonDisabled(links.startButton);
+  links.dataTime.disabled = true;
 
   const timerID = setInterval(() => {
     let ms = selectDate - Date.now();
@@ -70,6 +72,7 @@ function onStartButtonClick() {
     if (ms < 1000) {
       clearInterval(timerID);
       Notiflix.Notify.success('Time is over');
+      links.dataTime.disabled = false;
     }
   }, 1000);
 }

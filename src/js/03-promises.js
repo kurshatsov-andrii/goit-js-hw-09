@@ -17,6 +17,7 @@ form.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(event) {
   event.preventDefault();
+  document.querySelector('button').disabled = true;
 
   const initialDelay = Number(event.target.elements.delay.value);
   const step = Number(event.target.elements.step.value);
@@ -25,6 +26,7 @@ function onFormSubmit(event) {
   if (amount <= 0) {
     event.target.reset();
     Notiflix.Notify.failure('Please choose amount > 0');
+    document.querySelector('button').disabled = false;
     return;
   }
 
@@ -44,6 +46,9 @@ function onFormSubmit(event) {
       });
     delay += step;
   }
+  setTimeout(() => {
+    document.querySelector('button').disabled = false;
+  }, delay);
 }
 
 //Напиши скрипт, який на момент сабміту форми викликає функцію
